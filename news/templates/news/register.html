@@ -1,0 +1,17 @@
+{% extends "news/base.html" %}
+
+{% block title %}Регистрация — Азия Новости{% endblock %}
+
+{% block content %}
+    <section class="auth-card">
+        <p class="eyebrow">ПРИСОЕДИНЯЙТЕСЬ К ОБСУЖДЕНИЮ</p>
+        <h1>Создать аккаунт</h1>
+        <p class="muted">После регистрации мы отправим ссылку для подтверждения email.</p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+        <p class="form-note">Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+    </section>
+{% endblock %}

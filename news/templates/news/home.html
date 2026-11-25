@@ -1,0 +1,65 @@
+{% extends "news/base.html" %}
+
+{% block title %}Азия Новости — главное{% endblock %}
+
+{% block content %}
+    <section class="headline">
+        <div>
+            <p class="eyebrow">НОВОСТИ · АНАЛИТИКА · СОБЫТИЯ</p>
+            <h1>Главное сегодня</h1>
+            <p class="intro">Важные события Таджикистана и мира — в одной ленте.</p>
+        </div>
+        <form class="search-form" method="get" action="{% url 'home' %}">
+            {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+            <label class="visually-hidden" for="search">Поиск по новостям</label>
+            <input id="search" type="search" name="q" value="{{ search_query }}" placeholder="Найти новость">
+            <button type="submit">Поиск</button>
+        </form>
+    </section>
+
+    <nav class="category-nav" aria-label="Категории новостей">
+        <a class="{% if not selected_category %}active{% endif %}" href="{% url 'home' %}">Все новости</a>
+        {% for category in categories %}
+            <a class="{% if selected_category == category.pk|stringformat:'s' %}active{% endif %}"
+               href="{% url 'home' %}?category={{ category.pk }}">{{ category.name }}</a>
+        {% endfor %}
+    </nav>
+
+    <section id="news" class="news-section">
+        <div class="section-heading">
+            <h2>{% if search_query %}Результаты поиска{% else %}Последние публикации{% endif %}</h2>
+            <span>{{ articles|length }} материалов</span>
+        </div>
+
+        {% if articles %}
+            <div class="article-grid">
+                {% for article in articles %}
+                    <article class="article-card">
+                        {% if article.image_url %}
+                            <a class="article-image" href="{% url 'article_detail' article.pk %}">
+                                <img src="{{ article.image_url }}" alt="">
+                            </a>
+                        {% else %}
+                            <a class="article-image image-placeholder" href="{% url 'article_detail' article.pk %}">
+                                <span>АЗИЯ · НОВОСТИ</span>
+                            </a>
+                        {% endif %}
+                        <div class="article-card-content">
+                            <a class="category-label" href="{% url 'home' %}?category={{ article.category_id }}">
+                                {{ article.category.name }}
+                            </a>
+                            <h3><a href="{% url 'article_detail' article.pk %}">{{ article.title }}</a></h3>
+                            {% if article.summary %}<p>{{ article.summary|truncatewords:28 }}</p>{% endif %}
+                            <time datetime="{{ article.created_at|date:'c' }}">{{ article.created_at|date:"d.m.Y · H:i" }}</time>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h3>Публикаций пока нет</h3>
+                <p>Добавьте первую новость через панель администратора.</p>
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Азия Новости{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'news/site.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="topline">
+            <a class="brand" href="{% url 'home' %}"><span>АЗИЯ</span><strong>НОВОСТИ</strong></a>
+            <div class="account-links">
+                {% if request.user.is_authenticated %}
+                    <span class="user-label">{{ request.user.username }}</span>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button class="link-button" type="submit">Выйти</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Войти</a>
+                    <a class="signup-link" href="{% url 'register' %}">Регистрация</a>
+                {% endif %}
+            </div>
+        </div>
+        <nav class="main-nav" aria-label="Основная навигация">
+            <a href="{% url 'home' %}">Главное</a>
+            <a href="{% url 'home' %}#news">Новости</a>
+            <span>Таджикистан · Мир · Общество</span>
+        </nav>
+    </header>
+
+    <main class="page-container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="page-container">Независимый учебный новостной проект</div>
+    </footer>
+</body>
+</html>

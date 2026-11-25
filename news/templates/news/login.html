@@ -1,0 +1,16 @@
+{% extends "news/base.html" %}
+
+{% block title %}Вход — Азия Новости{% endblock %}
+
+{% block content %}
+    <section class="auth-card">
+        <p class="eyebrow">РАДЫ ВАС ВИДЕТЬ</p>
+        <h1>Войти</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Войти</button>
+        </form>
+        <p class="form-note">Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
+    </section>
+{% endblock %}

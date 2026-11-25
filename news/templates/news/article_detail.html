@@ -1,0 +1,50 @@
+{% extends "news/base.html" %}
+
+{% block title %}{{ article.title }} — Азия Новости{% endblock %}
+
+{% block content %}
+    <article class="story">
+        <a class="back-link" href="{% url 'home' %}">← Все новости</a>
+        <p class="category-label">{{ article.category.name }}</p>
+        <h1>{{ article.title }}</h1>
+        <p class="story-meta">Опубликовано {{ article.created_at|date:"d.m.Y · H:i" }}</p>
+        {% if article.image_url %}
+            <img class="story-image" src="{{ article.image_url }}" alt="">
+        {% endif %}
+        {% if article.summary %}<p class="story-summary">{{ article.summary }}</p>{% endif %}
+        <div class="story-content">{{ article.content|linebreaks }}</div>
+    </article>
+
+    <section class="comments-section">
+        <div class="section-heading">
+            <h2>Комментарии</h2>
+            <span>{{ comments|length }}</span>
+        </div>
+
+        {% if request.user.is_authenticated and request.user.email_confirmation.is_confirmed %}
+            <form class="comment-form" method="post" action="{% url 'comment_create' article.pk %}">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <button type="submit">Опубликовать комментарий</button>
+            </form>
+        {% elif request.user.is_authenticated %}
+            <p class="form-note">Чтобы комментировать, подтвердите email из письма.</p>
+        {% else %}
+            <p class="form-note"><a href="{% url 'login' %}">Войдите</a> и подтвердите email, чтобы оставить комментарий.</p>
+        {% endif %}
+
+        <div class="comment-list">
+            {% for comment in comments %}
+                <article class="comment">
+                    <div class="comment-meta">
+                        <strong>{{ comment.user.username }}</strong>
+                        <time datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|date:"d.m.Y · H:i" }}</time>
+                    </div>
+                    <p>{{ comment.text|linebreaksbr }}</p>
+                </article>
+            {% empty %}
+                <p class="muted">Комментариев пока нет. Будьте первым.</p>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}
